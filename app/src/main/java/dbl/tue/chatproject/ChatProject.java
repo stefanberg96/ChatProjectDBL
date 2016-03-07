@@ -31,7 +31,7 @@ public class ChatProject extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_chat_project, menu);
+        //getMenuInflater().inflate(R.menu.menu_chat_project, menu);
         return true;
     }
 
