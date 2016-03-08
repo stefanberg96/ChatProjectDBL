@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class ChatProject extends AppCompatActivity {
     ChatHistoryLocal chatHistoryLocal;
@@ -18,7 +19,11 @@ public class ChatProject extends AppCompatActivity {
         setContentView(R.layout.activity_chat_project);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Message message = new Message("Hallo oetlul");
+
+        TextView textView = new TextView(this);
+        textView = (TextView) findViewById(R.id.textView);
+
+        Message message = new Message("Wat een krachtpatser!");
         User sender = new User();
         sender.userID = 1234;
         User receiver = new User();
@@ -28,6 +33,7 @@ public class ChatProject extends AppCompatActivity {
 
         chatHistoryLocal = new ChatHistoryLocal(this);
         chatHistoryLocal.saveToDevice(message, sender);
+        chatHistoryLocal.getMessages();
     }
 
     @Override

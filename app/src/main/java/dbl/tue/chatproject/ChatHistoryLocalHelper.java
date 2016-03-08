@@ -19,7 +19,7 @@ public class ChatHistoryLocalHelper extends SQLiteOpenHelper{
                     ChatHistoryContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
                     ChatHistoryContract.FeedEntry.COLUMN_SENDER + TEXT_TYPE + COMMA_SEP +
                     ChatHistoryContract.FeedEntry.COLUMN_MESSAGE + TEXT_TYPE + COMMA_SEP +
-                    ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP;
+                    ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP + ")";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + ChatHistoryContract.FeedEntry.TABLE_NAME;

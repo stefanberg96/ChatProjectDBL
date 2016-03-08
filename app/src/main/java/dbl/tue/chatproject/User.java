@@ -15,7 +15,7 @@ public class User {
 
 
     public int getUserID() {
-        return UserID;
+        return userID;
     }
 
     public String getFirstName() {
