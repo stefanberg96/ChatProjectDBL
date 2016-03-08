@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class ChatProject extends AppCompatActivity {
+    ChatHistoryLocal chatHistoryLocal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,15 +18,16 @@ public class ChatProject extends AppCompatActivity {
         setContentView(R.layout.activity_chat_project);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Message message = new Message("Hallo oetlul");
+        User sender = new User();
+        sender.userID = 1234;
+        User receiver = new User();
+        sender.userID = 5678;
+        message.setSender(sender);
+        message.setRecipient(receiver);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        chatHistoryLocal = new ChatHistoryLocal(this);
+        chatHistoryLocal.saveToDevice(message, sender);
     }
 
     @Override

@@ -1,5 +1,7 @@
+package dbl.tue.chatproject;
+
 /**
- * Message class
+ * dbl.tue.chatproject.Message class
  */
 public class Message {
     String data;

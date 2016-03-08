@@ -1,9 +1,11 @@
+package dbl.tue.chatproject;
+
 /**
- * User class
+ * dbl.tue.chatproject.User class
  */
 public class User {
 
-    int UserID;
+    int userID;
     String firstName;
     String lastName;
     String facebook_Usertoken;
