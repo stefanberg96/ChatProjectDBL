@@ -15,6 +15,7 @@ public class ChatHistoryLocal {
     String colSender = ChatHistoryContract.FeedEntry.COLUMN_SENDER;
     String colTimestamp = ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP;
     String colMessage = ChatHistoryContract.FeedEntry.COLUMN_MESSAGE;
+    String colPerson = ChatHistoryContract.FeedEntry.COLUMN_PERSON;
 
     ChatHistoryLocal(Context ctx){
         localHelper = new ChatHistoryLocalHelper(ctx);
@@ -26,20 +27,21 @@ public class ChatHistoryLocal {
         // Gets the data repository in write mode
         SQLiteDatabase db = localHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(colSender, msg.getSender().getUserID());
-        values.put(colTimestamp, msg.getTimestamp());
-        values.put(colMessage, msg.getData());
-
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId;
-
         if(msg.getSender().getUserID() == currentUser.getUserID()){
             tableId = msg.getRecipient().getUserID();
         }else{
             tableId = msg.getSender().getUserID();
         }
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(colSender, msg.getSender().getUserID());
+        values.put(colTimestamp, msg.getTimestamp());
+        values.put(colMessage, msg.getData());
+        values.put(colPerson, tableId);
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId;
 
         newRowId = db.insert(
                 ChatHistoryContract.FeedEntry.TABLE_NAME,
@@ -57,7 +59,8 @@ public class ChatHistoryLocal {
                 ChatHistoryContract.FeedEntry._ID,
                 colSender,
                 colMessage,
-                colTimestamp
+                colTimestamp,
+                colPerson
         };
 
         // How you want the results sorted in the resulting Cursor
@@ -78,13 +81,14 @@ public class ChatHistoryLocal {
         );
 
         cursor.moveToFirst();
-        long itemId = cursor.getLong(
-                cursor.getColumnIndexOrThrow(ChatHistoryContract.FeedEntry._ID)
+        String timeStamp = cursor.getString(
+                cursor.getColumnIndexOrThrow(ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP)
         );
         String msgData = cursor.getString(
                 cursor.getColumnIndex(colMessage)
         );
         Log.v("ChatHistoryLocal", msgData);
+        Log.v("ChatHistoryLocal", timeStamp);
 
     }
 }

@@ -1,5 +1,9 @@
 package dbl.tue.chatproject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * dbl.tue.chatproject.Message class
  */
@@ -7,11 +11,18 @@ public class Message {
     String data;
     User recipient;
     User sender;
-    double timestamp;
+    String timestamp;
 
     Message(String data){
         this.data=data;
-        timestamp=System.currentTimeMillis();
+        timestamp = getDateTime();
+    }
+
+    private String getDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 
     public String getData() {
@@ -38,11 +49,11 @@ public class Message {
         this.sender = sender;
     }
 
-    public double getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(double timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }

@@ -13,6 +13,7 @@ public final class ChatHistoryContract {
     /* Inner class that defines the table contents */
     public static abstract class FeedEntry implements BaseColumns {
         public static final String TABLE_NAME = "messages";
+        public static final String COLUMN_PERSON = "person";
         public static final String COLUMN_SENDER = "sender";
         public static final String COLUMN_TIMESTAMP = "timestamp";
         public static final String COLUMN_MESSAGE = "message";
