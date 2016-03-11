@@ -6,10 +6,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ChatProject extends AppCompatActivity {
     ChatHistoryLocal chatHistoryLocal;
@@ -20,28 +23,37 @@ public class ChatProject extends AppCompatActivity {
         setContentView(R.layout.activity_chat_project);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ListView msgListView= (ListView) findViewById(R.id.listView);
 
-        TextView textView = new TextView(this);
-        textView = (TextView) findViewById(R.id.editText);
 
-        Message message = new Message("Wat een krachtpatser!");
-        User sender = new User();
+        final User sender = new User();
         sender.userID = 1234;
-        User receiver = new User();
+        final User receiver = new User();
         sender.userID = 5678;
-        message.setSender(sender);
-        message.setRecipient(receiver);
-
         chatHistoryLocal = new ChatHistoryLocal(this);
-        chatHistoryLocal.saveToDevice(message, sender);
-        chatHistoryLocal.getMessages();
+        final ChatAdapter chatAdapter=new ChatAdapter(this,chatHistoryLocal.getMessages(),msgListView,receiver);
+        msgListView.setAdapter(chatAdapter);
+        final TextView messagetext = (TextView) findViewById(R.id.editText);
+        messagetext.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    if (!messagetext.equals("\n")) {
+                        sendMessage(messagetext, sender, receiver, chatAdapter);
+                    }
 
-        FloatingActionButton fab=(FloatingActionButton) findViewById(R.id.fab);
+                }
+                return false;
+            }
+        });
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Log.v("ChatHistoryLocal", "PRessed the button");
+                sendMessage(messagetext,sender,receiver,chatAdapter);
             }
         });
     }
@@ -51,6 +63,20 @@ public class ChatProject extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_chat_project, menu);
         return true;
+    }
+
+    public void sendMessage(TextView messagetext, User sender, User receiver,ChatAdapter chatAdapter){
+        String data = messagetext.getText().toString();
+        if(!data.isEmpty()) {
+            Log.v("ChatHistoryLocal", data);
+
+            Message message = new Message(data.replaceAll("\n",""), sender.getUserID(), receiver.getUserID());
+            chatHistoryLocal.saveToDevice(message, sender);
+            messagetext.setText("");
+            chatAdapter.update(getApplicationContext());
+            chatAdapter.notifyDataSetChanged();
+
+        }
     }
 
     @Override

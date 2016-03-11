@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by Christian on 8-3-2016.
  */
@@ -27,15 +29,15 @@ public class ChatHistoryLocal {
         // Gets the data repository in write mode
         SQLiteDatabase db = localHelper.getWritableDatabase();
 
-        if(msg.getSender().getUserID() == currentUser.getUserID()){
-            tableId = msg.getRecipient().getUserID();
+        if(msg.getSender() == currentUser.getUserID()){
+            tableId = msg.getRecipient();
         }else{
-            tableId = msg.getSender().getUserID();
+            tableId = msg.getSender();
         }
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(colSender, msg.getSender().getUserID());
+        values.put(colSender, msg.getSender());
         values.put(colTimestamp, msg.getTimestamp());
         values.put(colMessage, msg.getData());
         values.put(colPerson, tableId);
@@ -48,9 +50,10 @@ public class ChatHistoryLocal {
                 ChatHistoryContract.FeedEntry.COLUMN_NULLABLE,
                 values);
 
+
     }
 
-    public void getMessages(){
+    public ArrayList<Message> getMessages(){
         SQLiteDatabase db = localHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
@@ -81,14 +84,43 @@ public class ChatHistoryLocal {
         );
 
         cursor.moveToFirst();
-        String timeStamp = cursor.getString(
-                cursor.getColumnIndexOrThrow(ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP)
-        );
-        String msgData = cursor.getString(
-                cursor.getColumnIndex(colMessage)
-        );
-        Log.v("ChatHistoryLocal", msgData);
-        Log.v("ChatHistoryLocal", timeStamp);
+
+        ArrayList<Message> messages = new ArrayList<>(12);
+        if(cursor.getCount()!=0) {
+
+
+            String timeStamp = cursor.getString(
+                    cursor.getColumnIndexOrThrow(ChatHistoryContract.FeedEntry.COLUMN_TIMESTAMP)
+            );
+            String msgData = cursor.getString(
+                    cursor.getColumnIndex(colMessage)
+            );
+            int sender = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndex(colSender)
+            ));
+            int receiver = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndex(colPerson)));
+            Message message = new Message(msgData, sender, receiver);
+            messages.add(message);
+            cursor.moveToNext();
+            for (int i = 0; i < 10 && cursor.getCount()> i+1; i++) {
+
+                msgData = cursor.getString(
+                        cursor.getColumnIndex(colMessage)
+                );
+                sender = Integer.parseInt(cursor.getString(
+                        cursor.getColumnIndex(colSender)
+                ));
+                receiver = Integer.parseInt(cursor.getString(
+                        cursor.getColumnIndex(colPerson)));
+                message = new Message(msgData, sender, receiver);
+                messages.add(message);
+                cursor.moveToNext();
+            }
+        }
+
+        return messages;
+
 
     }
 }

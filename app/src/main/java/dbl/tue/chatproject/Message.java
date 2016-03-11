@@ -7,15 +7,17 @@ import java.util.Locale;
 /**
  * dbl.tue.chatproject.Message class
  */
-public class Message {
+public class Message implements Comparable<Message> {
     String data;
-    User recipient;
-    User sender;
+    int recipient;
+    int sender;
     String timestamp;
 
-    Message(String data){
+    Message(String data, int senderid, int receiverid){
         this.data=data;
         timestamp = getDateTime();
+        this.sender=senderid;
+        this.recipient=receiverid;
     }
 
     private String getDateTime() {
@@ -33,19 +35,19 @@ public class Message {
         this.data = data;
     }
 
-    public User getRecipient() {
+    public int getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(User recipient) {
+    public void setRecipient(int recipient) {
         this.recipient = recipient;
     }
 
-    public User getSender() {
+    public int getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(int sender) {
         this.sender = sender;
     }
 
@@ -55,5 +57,12 @@ public class Message {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public int compareTo(Message another) {
+        SimpleDateFormat df= new SimpleDateFormat();
+
+        return - this.timestamp.compareTo(another.timestamp);
     }
 }
