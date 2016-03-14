@@ -3,6 +3,7 @@ package dbl.tue.chatproject;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +17,10 @@ import android.widget.Toast;
 
 public class ChatProject extends AppCompatActivity {
     ChatHistoryLocal chatHistoryLocal;
+    int nbofmessages;
+    SwipeRefreshLayout swipeContainer=null;
+    ChatAdapter chatAdapter=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,13 +30,13 @@ public class ChatProject extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ListView msgListView= (ListView) findViewById(R.id.listView);
 
-
         final User sender = new User();
         sender.userID = 1234;
         final User receiver = new User();
         sender.userID = 5678;
         chatHistoryLocal = new ChatHistoryLocal(this);
-        final ChatAdapter chatAdapter=new ChatAdapter(this,chatHistoryLocal.getMessages(),msgListView,receiver);
+        chatAdapter=new ChatAdapter(this,chatHistoryLocal.getMessages(nbofmessages),msgListView,receiver);
+
         msgListView.setAdapter(chatAdapter);
         final TextView messagetext = (TextView) findViewById(R.id.editText);
         messagetext.setOnKeyListener(new View.OnKeyListener() {
@@ -46,7 +51,32 @@ public class ChatProject extends AppCompatActivity {
                 return false;
             }
         });
+        // Lookup the swipe container view
+       swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                nbofmessages+=1;
 
+                chatAdapter.update(getApplicationContext(),nbofmessages, swipeContainer);
+                chatAdapter.notifyDataSetChanged();
+            }
+        });
+
+        chatAdapter.update(getApplicationContext(),nbofmessages,swipeContainer);
+        chatAdapter.notifyDataSetChanged();
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        chatAdapter.update(getApplicationContext(),nbofmessages,swipeContainer);
+        chatAdapter.notifyDataSetChanged();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +88,26 @@ public class ChatProject extends AppCompatActivity {
         });
     }
 
+
+//Use onSaveInstanceState(Bundle) and onRestoreInstanceState
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putInt("nbofmessages", nbofmessages);
+        // etc.
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    //onRestoreInstanceState
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        nbofmessages = savedInstanceState.getInt("nbofmessages");
+        chatAdapter.update(getApplicationContext(),nbofmessages,swipeContainer);
+        chatAdapter.notifyDataSetChanged();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -73,7 +123,7 @@ public class ChatProject extends AppCompatActivity {
             Message message = new Message(data.replaceAll("\n",""), sender.getUserID(), receiver.getUserID());
             chatHistoryLocal.saveToDevice(message, sender);
             messagetext.setText("");
-            chatAdapter.update(getApplicationContext());
+            chatAdapter.update(getApplicationContext(),nbofmessages++,swipeContainer );
             chatAdapter.notifyDataSetChanged();
 
         }

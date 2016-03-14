@@ -53,7 +53,7 @@ public class ChatHistoryLocal {
 
     }
 
-    public ArrayList<Message> getMessages(){
+    public ArrayList<Message> getMessages(int amountofmessages){
         SQLiteDatabase db = localHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
@@ -100,10 +100,10 @@ public class ChatHistoryLocal {
             ));
             int receiver = Integer.parseInt(cursor.getString(
                     cursor.getColumnIndex(colPerson)));
-            Message message = new Message(msgData, sender, receiver);
+            Message message = new Message(msgData, sender, receiver, timeStamp);
             messages.add(message);
             cursor.moveToNext();
-            for (int i = 0; i < 10 && cursor.getCount()> i+1; i++) {
+            for (int i = 0; i < amountofmessages-1 && cursor.getCount()> i+1; i++) {
 
                 msgData = cursor.getString(
                         cursor.getColumnIndex(colMessage)
@@ -113,7 +113,8 @@ public class ChatHistoryLocal {
                 ));
                 receiver = Integer.parseInt(cursor.getString(
                         cursor.getColumnIndex(colPerson)));
-                message = new Message(msgData, sender, receiver);
+
+                message = new Message(msgData, sender, receiver,cursor.getString(cursor.getColumnIndex(colTimestamp)) );
                 messages.add(message);
                 cursor.moveToNext();
             }

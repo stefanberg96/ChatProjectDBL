@@ -20,6 +20,13 @@ public class Message implements Comparable<Message> {
         this.recipient=receiverid;
     }
 
+    Message(String data, int senderid, int receiverid, String timestamp){
+        this.data=data;
+        this.timestamp = timestamp;
+        this.sender=senderid;
+        this.recipient=receiverid;
+    }
+
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.getDefault());

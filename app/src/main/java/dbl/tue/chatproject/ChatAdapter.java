@@ -7,6 +7,7 @@ import java.util.Collections;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -80,8 +81,14 @@ public class ChatAdapter extends BaseAdapter {
     }
 
     public void update(Context context) {
-        messages= new ChatHistoryLocal(context).getMessages();
+        messages= new ChatHistoryLocal(context).getMessages(10);
         Collections.sort(messages);
         Collections.reverse(messages);
+    }
+    public void update(Context context , int n, SwipeRefreshLayout swipe) {
+        messages= new ChatHistoryLocal(context).getMessages(n);
+        Collections.sort(messages);
+        Collections.reverse(messages);
+        swipe.setRefreshing(false);
     }
 }
