@@ -2,22 +2,20 @@ package dbl.tue.chatproject;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 public class ChatProject extends AppCompatActivity {
     ChatHistoryLocal chatHistoryLocal;
-    int nbofmessages;
+    int nbofmessages=15;
     SwipeRefreshLayout swipeContainer=null;
     ChatAdapter chatAdapter=null;
 
@@ -51,6 +49,8 @@ public class ChatProject extends AppCompatActivity {
                 return false;
             }
         });
+        msgListView.setSelection(msgListView.getCount()-1
+        );
         // Lookup the swipe container view
        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
@@ -60,7 +60,7 @@ public class ChatProject extends AppCompatActivity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                nbofmessages+=1;
+                nbofmessages+=10;
 
                 chatAdapter.update(getApplicationContext(),nbofmessages, swipeContainer);
                 chatAdapter.notifyDataSetChanged();
@@ -118,12 +118,10 @@ public class ChatProject extends AppCompatActivity {
     public void sendMessage(TextView messagetext, User sender, User receiver,ChatAdapter chatAdapter){
         String data = messagetext.getText().toString();
         if(!data.isEmpty()) {
-            Log.v("ChatHistoryLocal", data);
-
-            Message message = new Message(data.replaceAll("\n",""), sender.getUserID(), receiver.getUserID());
+            Message message = new Message(data.replaceAll("\n",""), receiver.getUserID(), sender.getUserID());
             chatHistoryLocal.saveToDevice(message, sender);
             messagetext.setText("");
-            chatAdapter.update(getApplicationContext(),nbofmessages++,swipeContainer );
+            chatAdapter.update(getApplicationContext(),nbofmessages,swipeContainer );
             chatAdapter.notifyDataSetChanged();
 
         }

@@ -61,6 +61,7 @@ public class ChatAdapter extends BaseAdapter {
 
         TextView msg = (TextView) vi.findViewById(R.id.message_text);
         msg.setText(message.data);
+        msg.setTextSize(18);
         LinearLayout layout = (LinearLayout) vi
                 .findViewById(R.id.bubble_layout);
         LinearLayout parent_layout = (LinearLayout) vi

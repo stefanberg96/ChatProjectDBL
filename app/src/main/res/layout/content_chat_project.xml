@@ -56,7 +56,8 @@
         android:transcriptMode="normal"
         android:layout_marginBottom="-10dp"
         android:divider="@null"
-        android:dividerHeight="0dp"/>
+        android:dividerHeight="0dp"
+        android:fastScrollAlwaysVisible="false" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
